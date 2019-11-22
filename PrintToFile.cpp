@@ -30,7 +30,7 @@ void PrintMatrix(double **Matrix,char *Directory,char *MatrixName,int m,int n)
 {
 	FILE *fp;
 	errno_t err;
-	err = fopen_s(&fp,Directory, "w+");
+	err = fopen_s(&fp,Directory, "a+");
 
 	fprintf(fp,"Matrix's name is: %s, Number of rows = %d, Number of Columns = %d\n",MatrixName,m,n);
 	printf("Matrix's name is: %s, Number of rows = %d, Number of Columns = %d\n",MatrixName,m,n);
@@ -44,6 +44,22 @@ void PrintMatrix(double **Matrix,char *Directory,char *MatrixName,int m,int n)
 		}
 		fprintf(fp,"\n");
 		printf("\n");
+	}
+	fclose(fp);
+}
+void PrintArray(double *Array,char *Directory,char *MatrixName,int m)
+{
+	FILE *fp;
+	errno_t err;
+	err = fopen_s(&fp,Directory, "a+");
+
+	fprintf(fp,"Array's name is: %s, Number of rows = %d",MatrixName,m);
+	printf("Array's name is: %s, Number of rows = %d",MatrixName,m);
+	int i;
+	for(i=0;i<m;i++)
+	{
+			fprintf(fp,"%16.11lf",Array[i]);
+			printf("%16.11lf",Array[i]);
 	}
 	fclose(fp);
 }

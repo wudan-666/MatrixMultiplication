@@ -5,4 +5,5 @@ void PrintToFile(double **Matrix,int mm,int nn,double *CoordX,double *CoordY,dou
 
 void PrintMatrix(double **Matrix,char *Directory,char *MatrixName,int m,int n);
 
+void PrintArray(double *Array,char *Directory,char *MatrixName,int m);
 #endif

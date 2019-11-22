@@ -7,9 +7,9 @@
 int main(int argc,char *argv[])
 {
 	int i;
-	char *Directory1,*Directory2;
+	char *Directory1,*Directory2,*Directory3,*Directory4;
 	Directory1 = "C:\\Users\\wudan\\c\\Array.txt";
-	Directory2 = "C:\\Users\\wudan\\c\\Matrix.txt";
+	Directory2 = "C:\\Users\\wudan\\c\\Matrix1.txt";
 
 	//************动态数组（一维）***********//
 	//声明//
@@ -25,19 +25,33 @@ int main(int argc,char *argv[])
 	//InitializeArray(CoordZ,i,2.0);
 
 	//************动态数组（二维）***********//
-	double **Matrix;
-	int m = 20,n = 20;
+	double **Matrix1,**Matrix2,**Matrix3;
+	int m = 20,n = 20,p = 1;
 	int Bandwidth = 5;
-	Matrix = (double**)malloc(m*sizeof(double*));
+	Matrix1 = (double**)malloc(m*sizeof(double*));
 	for(i=0;i<m;i++)
 	{
-		*(Matrix+i) = (double*)malloc(n*sizeof(double));
+		*(Matrix1+i) = (double*)malloc(n*sizeof(double));
 	} 
-
-	InitializeMatrix(Matrix,m,n,0.0);
-	MatrixDefinition(Matrix,m,Bandwidth);
-	PrintMatrix(Matrix,Directory2,"BBB",m,n);
-
+	Matrix2 = (double**)malloc(n*sizeof(double*));
+	for(i=0;i<m;i++)
+	{
+		*(Matrix2+i) = (double*)malloc(p*sizeof(double));
+	} 
+	Matrix3 = (double**)malloc(m*sizeof(double*));
+	for(i=0;i<m;i++)
+	{
+		*(Matrix3+i) = (double*)malloc(p*sizeof(double));
+	} 
+	InitializeMatrix(Matrix1,m,n,0.0);
+    InitializeMatrix(Matrix2,n,p,0.0);
+	InitializeMatrix(Matrix3,m,p,0.0);
+	MatrixDefinition(Matrix1,m,Bandwidth);
+	Matrix2Definition(Matrix2,n,p);
+	MatrixMultiply(Matrix1,Matrix2,Matrix3,m,n,p);
+	PrintMatrix(Matrix1,Directory2,"A",m,n);
+	PrintMatrix(Matrix2,Directory2,"x",n,p);
+	PrintMatrix(Matrix3,Directory2,"b",m,p);
 	system("pause");
 
 	//************从文件读取***********//
