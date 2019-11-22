@@ -58,8 +58,8 @@ void PrintArray(double *Array,char *Directory,char *MatrixName,int m)
 	int i;
 	for(i=0;i<m;i++)
 	{
-			fprintf(fp,"%16.11lf",Array[i]);
-			printf("%16.11lf",Array[i]);
+			fprintf(fp,"%16.11lf\n",Array[i]);
+			printf("%16.11lf\n",Array[i]);
 	}
 	fclose(fp);
 }

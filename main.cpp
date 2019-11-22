@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "Initialization.h"
 #include "PrintToFile.h"
 #include "MatrixOperation.h"
@@ -7,7 +8,7 @@
 int main(int argc,char *argv[])
 {
 	int i;
-	char *Directory1,*Directory2,*Directory3,*Directory4;
+	char *Directory1,*Directory2;
 	Directory1 = "C:\\Users\\wudan\\c\\Array.txt";
 	Directory2 = "C:\\Users\\wudan\\c\\Matrix1.txt";
 
@@ -25,33 +26,80 @@ int main(int argc,char *argv[])
 	//InitializeArray(CoordZ,i,2.0);
 
 	//************动态数组（二维）***********//
-	double **Matrix1,**Matrix2,**Matrix3;
-	int m = 20,n = 20,p = 1;
+	double *x,*b,*r,*r_new,*p,*ArrayTemp;
+	double **Matrix1;
+	double alpha,beta;
+	//double **Matrix2,**Matrix3;
+	double error,error0=1E-06;
+	int n = 20,m = n;
+	//int p = 1;
 	int Bandwidth = 5;
-	Matrix1 = (double**)malloc(m*sizeof(double*));
-	for(i=0;i<m;i++)
+	Matrix1 = (double**)malloc(n*sizeof(double*));
+	for(i=0;i<n;i++)
 	{
 		*(Matrix1+i) = (double*)malloc(n*sizeof(double));
 	} 
-	Matrix2 = (double**)malloc(n*sizeof(double*));
-	for(i=0;i<m;i++)
+	//Matrix2 = (double**)malloc(n*sizeof(double*));
+	//for(i=0;i<m;i++)
+	//{
+	//	*(Matrix2+i) = (double*)malloc(p*sizeof(double));
+	//} 
+	//Matrix3 = (double**)malloc(m*sizeof(double*));
+	//for(i=0;i<m;i++)
+	//{
+	//	*(Matrix3+i) = (double*)malloc(p*sizeof(double));
+	//} 
+	x = (double*)malloc(n*sizeof(double));
+	b = (double*)malloc(n*sizeof(double));
+	r = (double*)malloc(n*sizeof(double));
+	r_new= (double*)malloc(n*sizeof(double));
+	p = (double*)malloc(n*sizeof(double));
+	ArrayTemp = (double*)malloc(n*sizeof(double));
+	InitializeArray(x,n,0.0);
+	InitializeArray(b,n,1.0);
+	InitializeMatrix(Matrix1,n,n,0.0);
+    //InitializeMatrix(Matrix2,n,p,0.0);
+	//InitializeMatrix(Matrix3,m,p,0.0);
+	//Matrix2Definition(Matrix2,n,p);
+	MatrixDefinition(Matrix1,n,Bandwidth);
+	//Initialization//
+	//Conjugate Gradient//
+	InitializeArray(x,n,0.0);
+	MatrixMultiply(Matrix1,x,ArrayTemp,n,n);
+	for(i=0;i<n;i++)
 	{
-		*(Matrix2+i) = (double*)malloc(p*sizeof(double));
-	} 
-	Matrix3 = (double**)malloc(m*sizeof(double*));
-	for(i=0;i<m;i++)
+		r[i]=b[i]-ArrayTemp[i];
+		p[i]=r[i];
+	}
+	int k = 0;
+	error=sqrt(Dotproduct(r,r,n));
+	while (error>error0)
 	{
-		*(Matrix3+i) = (double*)malloc(p*sizeof(double));
-	} 
-	InitializeMatrix(Matrix1,m,n,0.0);
-    InitializeMatrix(Matrix2,n,p,0.0);
-	InitializeMatrix(Matrix3,m,p,0.0);
-	MatrixDefinition(Matrix1,m,Bandwidth);
-	Matrix2Definition(Matrix2,n,p);
-	MatrixMultiply(Matrix1,Matrix2,Matrix3,m,n,p);
-	PrintMatrix(Matrix1,Directory2,"A",m,n);
-	PrintMatrix(Matrix2,Directory2,"x",n,p);
-	PrintMatrix(Matrix3,Directory2,"b",m,p);
+		MatrixMultiply(Matrix1,p,ArrayTemp,n,n);
+		alpha=Dotproduct(r,r,n)/Dotproduct(p,ArrayTemp,n);
+		for(i=0;i<n;i++)
+		{
+			x[i]+=alpha*p[i];
+			r_new[i]=r[i]-alpha*ArrayTemp[i];
+		}
+		error = sqrt(Dotproduct(r_new,r_new,n));
+		beta=Dotproduct(r_new,r_new,n)/Dotproduct(r,r,n);
+		for(i=0;i<n;i++)
+		{
+			p[i] = r_new[i]+beta*p[i];
+			r[i] = r_new[i];
+		}
+		k++;
+	}
+	//MatrixMultiply(Matrix1,Matrix2,Matrix3,m,n,p);
+	//MatrixMultiply(Matrix1,x,b,m,n);
+	//PrintMatrix(Matrix1,Directory2,"A",m,n);
+	//PrintMatrix(Matrix2,Directory2,"x",n,p);
+	//PrintMatrix(Matrix3,Directory2,"b",m,p);
+	printf("Iteration number = %d, error=%12E\n",k,error);
+	//PrintMatrix(Matrix1,Directory2,"A",n,n);
+	PrintArray(x,Directory1,"x",n);
+	//PrintArray(b,Directory1,"b",n);
 	system("pause");
 
 	//************从文件读取***********//
